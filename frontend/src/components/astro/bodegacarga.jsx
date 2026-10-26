@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ListGroup, ListGroupItem, Button, ButtonGroup } from 'reactstrap';
 import { getCarga, actualizarUnidades, eliminarDeCarga } from '../../services/api';
 
 function BodegaCarga() {
@@ -44,9 +45,7 @@ function BodegaCarga() {
         }
     }
 
-    useEffect(() => {
-        cargarBodega();
-    }, []);
+    useEffect(() => { cargarBodega(); }, []);
 
     return (
         <div>
@@ -54,27 +53,37 @@ function BodegaCarga() {
 
             <p>{mensaje}</p>
 
-            <ul>
+            <ListGroup>
                 {carga.map((item) => (
-                    <li key={item.id}>
-                        {item.nombre} - Unidades: {item.cantidad}
+                    <ListGroupItem key={item.id}>
+                        <p>
+                            {item.nombre} - Unidades: {item.cantidad}
+                        </p>
 
-                        <button onClick={() => disminuir(item.id, item.cantidad)}>
-                            -
-                        </button>
+                        <ButtonGroup size="sm">
+                            <Button
+                                onClick={() => disminuir(item.id, item.cantidad)}
+                            >
+                                -
+                            </Button>
 
-                        <button onClick={() => aumentar(item.id, item.cantidad)}>
-                            +
-                        </button>
+                            <Button
+                                onClick={() => aumentar(item.id, item.cantidad)}
+                            >
+                                +
+                            </Button>
+                        </ButtonGroup>
 
-                        <button onClick={() => desembarcar(item.id)}>
+                        <Button
+                            onClick={() => desembarcar(item.id)}
+                        >
                             Desembarcar
-                        </button>
-                    </li>
+                        </Button>
+                    </ListGroupItem>
                 ))}
-            </ul>
+            </ListGroup>
         </div>
     );
 }
 
-export default BodegaCarga;
+export default BodegaCarga; v
