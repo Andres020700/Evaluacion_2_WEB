@@ -134,5 +134,58 @@ router.post('/carga/agregar', (req, res) => {
   return res.status(201).json({ mensaje: 'Suministro agregado a la carga', ...armarRespuestaCarga() });
 });
 
+router.put('/carga/actualizar-unidades/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const cuerpo = req.body ?? {};
+  const nuevaCantidad = cuerpo.cantidad;
+
+  if (!Number.isInteger(nuevaCantidad) || nuevaCantidad <= 0) {
+    return res.status(400).json({ mensaje: 'La cantidad debe ser un número entero mayor a 0' });
+  }
+
+  const producto = buscarProducto(id);
+  if (!producto) {
+    return res.status(404).json({ mensaje: 'Suministro no encontrado' });
+  }
+
+  const indiceCargado = itemsCargados.findIndex((item) => item.id === id);
+  if (indiceCargado < 0) {
+    return res.status(404).json({ mensaje: 'El suministro no está en la carga' });
+  }
+
+  const cantidadActual = itemsCargados[indiceCargado].cantidad;
+  const diferencia = nuevaCantidad - cantidadActual;
+
+  if (diferencia > 0) {
+    // Primero se comprueba stock; luego el costo incremental contra el saldo.
+    if (diferencia > producto.stock) {
+      return res.status(400).json({ mensaje: 'Stock en base insuficiente' });
+    }
+    if (diferencia * producto.precio > calcularCreditos()) {
+      return res.status(400).json({ mensaje: 'Créditos insuficientes para esta cantidad' });
+    }
+    producto.stock -= diferencia;
+  } else if (diferencia < 0) {
+    producto.stock += Math.abs(diferencia);
+  }
+
+  itemsCargados[indiceCargado].cantidad = nuevaCantidad;
+  return res.status(200).json({ mensaje: 'Cantidad actualizada', ...armarRespuestaCarga() });
+});
+
+router.delete('/carga/eliminar/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const indiceCargado = itemsCargados.findIndex((item) => item.id === id);
+
+  if (indiceCargado < 0) {
+    return res.status(404).json({ mensaje: 'El suministro no está en la carga' });
+  }
+
+  const producto = buscarProducto(id);
+  producto.stock += itemsCargados[indiceCargado].cantidad;
+  itemsCargados = itemsCargados.filter((item) => item.id !== id);
+
+  return res.status(200).json({ mensaje: 'Suministro eliminado de la carga', ...armarRespuestaCarga() });
+});
 
 module.exports = router;
