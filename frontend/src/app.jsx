@@ -5,7 +5,8 @@ function App() {
     <div>
       <h1>AstroLogistics</h1>
 
-      <Reactor />
+      <Reactor/>
+      <BodegaCarga/>
     </div>
   );
 }
