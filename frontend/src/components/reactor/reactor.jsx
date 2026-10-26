@@ -40,7 +40,7 @@ function Reactor() {
     }
 
     return (
-        <div>
+        <div className="reactor">
             <h2>Reactor</h2>
 
             <form onSubmit={enviarTemperatura}>

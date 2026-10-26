@@ -1,25 +1,36 @@
 import { useState } from 'react';
+import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import Reactor from './components/reactor/reactor';
-import BodegaCarga from './components/astro/bodegacarga';
+import Astro from './components/astro/astro';
 
 function App() {
   const [vista, setVista] = useState('reactor');
 
+  const cambiarVista = (evento, nuevaVista) => {
+    evento.preventDefault();
+    setVista(nuevaVista);
+  };
+
   return (
-    <div>
-      <h1>AstroLogistics</h1>
+  <div>
+      <Navbar dark color="dark" className="px-3 mb-3">
+        <NavbarBrand>Evaluación II · Programación Web</NavbarBrand>
+        <Nav pills>
+          <NavItem>
+            <NavLink href="#" active={vista === 'reactor'} onClick={(e) => cambiarVista(e, 'reactor')}>
+              Ejercicio 1: Reactor
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink href="#" active={vista === 'astro'} onClick={(e) => cambiarVista(e, 'astro')}>
+              Ejercicio 2: AstroLogistics
+            </NavLink>
+          </NavItem>
+        </Nav>
+      </Navbar>
 
-      <button onClick={() => setVista('reactor')}>
-        Reactor
-      </button>
-
-      <button onClick={() => setVista('bodega')}>
-        Bodega
-      </button>
-
-      {vista === 'reactor' && <Reactor/>}
-
-      {vista === 'bodega' && <BodegaCarga/>}
+      {vista === 'reactor' && <Reactor />}
+      {vista === 'astro' && <Astro />}
     </div>
   );
 }
