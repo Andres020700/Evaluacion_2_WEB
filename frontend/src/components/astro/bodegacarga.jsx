@@ -86,4 +86,4 @@ function BodegaCarga() {
     );
 }
 
-export default BodegaCarga; v
+export default BodegaCarga; 
