@@ -93,6 +93,46 @@ function verificarSesion(req, res, next) {
 
 router.use(verificarSesion);
 
+router.get('/inventario', (req, res) => {
+  res.status(200).json(inventario);
+});
+
+router.get('/carga', (req, res) => {
+  res.status(200).json(armarRespuestaCarga());
+});
+
+router.post('/carga/agregar', (req, res) => {
+  const cuerpo = req.body ?? {};
+  const equipoId = Number(cuerpo.equipoId);
+  const cantidad = cuerpo.cantidad;
+
+  if (!Number.isInteger(cantidad) || cantidad <= 0) {
+    return res.status(400).json({ mensaje: 'La cantidad debe ser un número entero mayor a 0' });
+  }
+
+  const producto = buscarProducto(equipoId);
+  if (!producto) {
+    return res.status(404).json({ mensaje: 'Suministro no encontrado' });
+  }
+
+  // Se valida stock antes de créditos, y no se modifica estado antes de ambas.
+  if (cantidad > producto.stock) {
+    return res.status(400).json({ mensaje: 'Stock en base insuficiente' });
+  }
+  if (cantidad * producto.precio > calcularCreditos()) {
+    return res.status(400).json({ mensaje: 'Créditos insuficientes para esta cantidad' });
+  }
+
+  const indiceCargado = itemsCargados.findIndex((item) => item.id === equipoId);
+  if (indiceCargado >= 0) {
+    itemsCargados[indiceCargado].cantidad += cantidad;
+  } else {
+    itemsCargados.push({ id: equipoId, cantidad });
+  }
+  producto.stock -= cantidad;
+
+  return res.status(201).json({ mensaje: 'Suministro agregado a la carga', ...armarRespuestaCarga() });
+});
 
 
 module.exports = router;
