@@ -8,7 +8,7 @@ AstroLogistics Ltd. + Estabiliza el Reactor
 - Hector Andres Lopez Medrano
 - Rodrigo Javier Mendoza Alvarado
 - Angel Gabriel Piche Martinez
-- (Nombre 4)
+- Fernando José Rivas Henríquez
 
 ## Requisitos
 - Node.js 18 o superior
