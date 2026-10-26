@@ -1,4 +1,5 @@
 import Reactor from './components/reactor/reactor';
+import BodegaCarga from './components/astro/bodegacarga';
 
 function App() {
   return (
