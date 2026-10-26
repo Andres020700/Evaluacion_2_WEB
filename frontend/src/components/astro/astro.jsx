@@ -56,7 +56,7 @@ function Astro() {
           <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />
         </Col>
         <Col md="4">
-          <BodegaCarga key={version} onCambio={refrescar} />
+          <BodegaCarga key={version} onCambio={refrescar} onError={(msg) => setError({ msg, id: Date.now() })} />
         </Col>
       </Row>
     </Container>
