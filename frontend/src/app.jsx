@@ -1,5 +1,13 @@
+import Reactor from './components/reactor/reactor';
+
 function App() {
-  return <h1>AstroLogistics</h1>;
+  return (
+    <div>
+      <h1>AstroLogistics</h1>
+
+      <Reactor />
+    </div>
+  );
 }
 
 export default App;
