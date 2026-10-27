@@ -11,26 +11,13 @@ function Astro() {
   const [carga, setCarga] = useState({ creditos: 0, itemsCargados: [], total: 0 });
   const [error, setError] = useState(null);
   const [calculando, setCalculando] = useState(false);
-  const [version, setVersion] = useState(0);
   const [expirada, setExpirada] = useState(false);
-
-const alExpirar = () => {
-  setExpirada(true);
-  setError(null);
-};
-
-const alReiniciar = () => {
-  setExpirada(false);
-  setError(null);
-  refrescar();
-};
 
   const refrescar = async () => {
     try {
       const [inv, car] = await Promise.all([getInventario(), getCarga()]);
       setInventario(inv);
       setCarga(car);
-      setVersion((v) => v + 1); // remonta la Bodega para que recargue
     } catch (e) {
       setError({ msg: e.message, id: Date.now() });
     }
@@ -40,11 +27,13 @@ const alReiniciar = () => {
     refrescar();
   }, []);
 
-  const agregar = async (equipoId) => {
+  // Envuelve cualquier acción (añadir, -, +, desembarcar): muestra
+  // "Calculando peso...", captura el error del backend y refresca los datos.
+  const ejecutar = async (accion) => {
     setCalculando(true);
     setError(null);
     try {
-      await agregarACarga(equipoId, 1);
+      await accion();
       await refrescar();
     } catch (e) {
       setError({ msg: e.message, id: Date.now() });
@@ -53,35 +42,36 @@ const alReiniciar = () => {
     }
   };
 
-  return (
-  <Container className="mt-3">
-    <SessionTimer onExpire={alExpirar} onRestart={alReiniciar} />
+  const agregar = (equipoId) => ejecutar(() => agregarACarga(equipoId, 1));
 
-    {!expirada && (
-      <>
-        {error && (
-          <UncontrolledAlert key={error.id} color="warning">
-            {error.msg}
-          </UncontrolledAlert>
-        )}
-        <PanelMision creditos={carga.creditos} total={carga.total} />
-        {calculando && <p className="text-muted">Calculando peso...</p>}
-        <Row>
-          <Col md="8">
-            <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />
-          </Col>
-          <Col md="4">
-            <BodegaCarga
-              key={version}
-              onCambio={refrescar}
-              onError={(msg) => setError({ msg, id: Date.now() })}
-            />
-          </Col>
-        </Row>
-      </>
-    )}
-  </Container>
-);
+  return (
+    <Container className="mt-3">
+      {error && (
+        <UncontrolledAlert key={error.id} color="warning">
+          {error.msg}
+        </UncontrolledAlert>
+      )}
+      <SessionTimer onRestart={refrescar} onEstado={setExpirada} />
+      {!expirada && (
+        <>
+          <PanelMision creditos={carga.creditos} total={carga.total} />
+          {calculando && <p className="text-muted">Calculando peso...</p>}
+          <Row>
+            <Col md="8">
+              <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />
+            </Col>
+            <Col md="4">
+              <BodegaCarga
+                items={carga.itemsCargados}
+                onAccion={ejecutar}
+                calculando={calculando}
+              />
+            </Col>
+          </Row>
+        </>
+      )}
+    </Container>
+  );
 }
 
 export default Astro;
