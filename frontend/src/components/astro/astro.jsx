@@ -29,10 +29,11 @@ function Astro() {
 
   // Envuelve cualquier acción (añadir, -, +, desembarcar): muestra
   // "Calculando peso...", captura el error del backend y refresca los datos.
-  const ejecutar = async (accion) => {
-    setCalculando(true);
+  const ejecutar = async (accion, mostrarCalculo = true) => {
+    if (mostrarCalculo) setCalculando(true);
     setError(null);
     try {
+        await new Promise((r) => setTimeout(r, 400));
       await accion();
       await refrescar();
     } catch (e) {
@@ -55,7 +56,7 @@ function Astro() {
       {!expirada && (
         <>
           <PanelMision creditos={carga.creditos} total={carga.total} />
-          {calculando && <p className="text-muted">Calculando peso...</p>}
+          {calculando && <p className="text-info fw-bold">Calculando peso...</p>}
           <Row>
             <Col md="8">
               <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />

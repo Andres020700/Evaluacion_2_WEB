@@ -14,10 +14,11 @@ function BodegaCarga({ items, onAccion, calculando }) {
                         <ButtonGroup size="sm">
                             <Button
                                 disabled={calculando || item.cantidad <= 1}
-                                onClick={() => onAccion(() => actualizarUnidades(item.id, item.cantidad - 1))}
+                                onClick={() => onAccion(() => actualizarUnidades(item.id, item.cantidad - 1), false)}
                             >
                                 -
                             </Button>
+
                             <Button
                                 disabled={calculando}
                                 onClick={() => onAccion(() => actualizarUnidades(item.id, item.cantidad + 1))}
@@ -32,7 +33,7 @@ function BodegaCarga({ items, onAccion, calculando }) {
                             size="sm"
                             className="ms-2"
                             disabled={calculando}
-                            onClick={() => onAccion(() => eliminarDeCarga(item.id))}
+                            onClick={() => onAccion(() => eliminarDeCarga(item.id), false)}
                         >
                             Desembarcar
                         </Button>
