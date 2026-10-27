@@ -12,7 +12,7 @@ function App() {
   };
 
   return (
-  <div>
+    <div>
       <Navbar dark color="dark" className="px-3 mb-3">
         <NavbarBrand>Evaluación II · Programación Web</NavbarBrand>
         <Nav pills>
@@ -29,7 +29,10 @@ function App() {
         </Nav>
       </Navbar>
 
-      {vista === 'reactor' && <Reactor />}
+      {/* El Reactor se oculta en vez de desmontarse, así conserva su historial */}
+      <div style={{ display: vista === 'reactor' ? 'block' : 'none' }}>
+        <Reactor />
+      </div>
       {vista === 'astro' && <Astro />}
     </div>
   );
