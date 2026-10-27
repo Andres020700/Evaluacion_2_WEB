@@ -12,6 +12,18 @@ function Astro() {
   const [error, setError] = useState(null);
   const [calculando, setCalculando] = useState(false);
   const [version, setVersion] = useState(0);
+  const [expirada, setExpirada] = useState(false);
+
+const alExpirar = () => {
+  setExpirada(true);
+  setError(null);
+};
+
+const alReiniciar = () => {
+  setExpirada(false);
+  setError(null);
+  refrescar();
+};
 
   const refrescar = async () => {
     try {
@@ -42,25 +54,34 @@ function Astro() {
   };
 
   return (
-    <Container className="mt-3">
-      {error && (
-        <UncontrolledAlert key={error.id} color="warning">
-          {error.msg}
-        </UncontrolledAlert>
-      )}
-      <SessionTimer onRestart={refrescar} />
-      <PanelMision creditos={carga.creditos} total={carga.total} />
-      {calculando && <p className="text-muted">Calculando peso...</p>}
-      <Row>
-        <Col md="8">
-          <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />
-        </Col>
-        <Col md="4">
-          <BodegaCarga key={version} onCambio={refrescar} onError={(msg) => setError({ msg, id: Date.now() })} />
-        </Col>
-      </Row>
-    </Container>
-  );
+  <Container className="mt-3">
+    <SessionTimer onExpire={alExpirar} onRestart={alReiniciar} />
+
+    {!expirada && (
+      <>
+        {error && (
+          <UncontrolledAlert key={error.id} color="warning">
+            {error.msg}
+          </UncontrolledAlert>
+        )}
+        <PanelMision creditos={carga.creditos} total={carga.total} />
+        {calculando && <p className="text-muted">Calculando peso...</p>}
+        <Row>
+          <Col md="8">
+            <Catalogo inventario={inventario} onAgregar={agregar} calculando={calculando} />
+          </Col>
+          <Col md="4">
+            <BodegaCarga
+              key={version}
+              onCambio={refrescar}
+              onError={(msg) => setError({ msg, id: Date.now() })}
+            />
+          </Col>
+        </Row>
+      </>
+    )}
+  </Container>
+);
 }
 
 export default Astro;
