@@ -18,6 +18,7 @@ function BodegaCarga({ items, onAccion, calculando }) {
                             >
                                 -
                             </Button>
+
                             <Button
                                 disabled={calculando}
                                 onClick={() => onAccion(() => actualizarUnidades(item.id, item.cantidad + 1))}

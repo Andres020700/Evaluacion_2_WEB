@@ -55,3 +55,10 @@ body {
 .astro-card:hover {
   transform: translateY(-3px);
 }
+
+button:disabled {
+    background-color: gray !important;
+    color: white !important;
+    cursor: not-allowed;
+    opacity: 1;
+}

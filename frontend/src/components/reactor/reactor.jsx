@@ -49,9 +49,10 @@ function Reactor() {
                     value={temperatura}
                     onChange={(evento) => setTemperatura(evento.target.value)}
                     placeholder="Ingrese temperatura"
+                    disabled={estabilizado}
                 />
 
-                <button type="submit">
+                <button type="submit" disabled={estabilizado}>
                     Ajustar
                 </button>
             </form>
