@@ -9,7 +9,7 @@ const formatear = (total) => {
   return `${min}:${seg}`;
 };
 
-function SessionTimer({ onRestart }) {
+function SessionTimer({ onRestart, onExpire }) {
   const [segundos, setSegundos] = useState(null);
   const [expirada, setExpirada] = useState(false);
 
@@ -19,6 +19,9 @@ function SessionTimer({ onRestart }) {
       const data = await getSesion();
       setSegundos(data.tiempoRestante);
       setExpirada(!data.activa);
+      if (!data.activa && onExpire) {
+        onExpire();
+      }
     } catch (error) {
       console.error('Error al consultar la sesión', error);
     }
@@ -35,6 +38,7 @@ function SessionTimer({ onRestart }) {
 
     if (segundos <= 0) {
       setExpirada(true);
+      if (onExpire) onExpire();
       return;
     }
 
